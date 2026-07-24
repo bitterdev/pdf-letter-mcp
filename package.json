@@ -1,0 +1,41 @@
+{
+  "name": "pdf-letter-mcp",
+  "version": "1.0.0",
+  "description": "Local stdio MCP server that renders letters as PDF, DIN 5008 compliant for German mail, multilingual, with signature images.",
+  "author": "Fabian Bitter (fabian@bitter.de)",
+  "license": "MIT",
+  "type": "module",
+  "main": "dist/src/index.js",
+  "bin": {
+    "pdf-letter-mcp": "dist/src/index.js"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "tsc -p tsconfig.json --watch",
+    "start": "node dist/src/index.js",
+    "test": "npm run build && node --test dist/test/*.test.js",
+    "examples": "npm run build && node dist/scripts/render-examples.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "@pdf-lib/fontkit": "^1.1.1",
+    "dejavu-fonts-ttf": "^2.37.3",
+    "hyphen": "^1.14.1",
+    "pdf-lib": "^1.17.1",
+    "zod": "^3.25.76"
+  },
+  "optionalDependencies": {
+    "sharp": "^0.34.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.3",
+    "typescript": "^5.8.3"
+  }
+}
