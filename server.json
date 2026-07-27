@@ -6,5 +6,27 @@
     "url": "https://github.com/bitterdev/pdf-letter-mcp",
     "source": "github"
   },
-  "version": "1.0.0"
+  "version": "1.0.1",
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "pdf-letter-mcp",
+      "version": "1.0.0",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "PDF_LETTER_OUTPUT_DIR",
+          "description": "Directory for generated letter PDFs, defaults to the system temp directory",
+          "isRequired": false
+        },
+        {
+          "name": "PDF_LETTER_FONT_DIR",
+          "description": "Additional font directory searched when a font family is resolved by name",
+          "isRequired": false
+        }
+      ]
+    }
+  ]
 }
