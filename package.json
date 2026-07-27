@@ -2,6 +2,7 @@
   "name": "pdf-letter-mcp",
   "version": "1.0.0",
   "description": "Local stdio MCP server that renders letters as PDF, DIN 5008 compliant for German mail, multilingual, with signature images.",
+  "mcpName": "io.github.bitterdev/pdf-letter-mcp",
   "author": "Fabian Bitter (fabian@bitter.de)",
   "license": "MIT",
   "type": "module",

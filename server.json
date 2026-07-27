@@ -1,0 +1,10 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.bitterdev/pdf-letter-mcp",
+  "description": "Renders letters as print ready PDFs, DIN 5008 compliant for German window envelopes.",
+  "repository": {
+    "url": "https://github.com/bitterdev/pdf-letter-mcp",
+    "source": "github"
+  },
+  "version": "1.0.0"
+}
