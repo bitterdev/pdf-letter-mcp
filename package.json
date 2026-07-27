@@ -11,8 +11,9 @@
     "pdf-letter-mcp": "dist/src/index.js"
   },
   "files": [
-    "dist",
-    "README.md"
+    "dist/src",
+    "README.md",
+    "LICENSE"
   ],
   "engines": {
     "node": ">=20"
