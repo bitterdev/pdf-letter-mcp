@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 /* Author: Fabian Bitter (fabian@bitter.de) */
 
+import { createRequire } from 'node:module';
 import { mkdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
@@ -16,7 +17,14 @@ import { letterShape, outputShape } from './server/schema.js';
 import { defaultOutputDir, slugify, uniquePath, writePdf } from './server/output.js';
 import { applyProfile, listProfiles, profilesPath } from './server/profiles.js';
 
-const packageVersion = '1.0.0';
+const packageVersion = ((): string => {
+  try {
+    const require = createRequire(import.meta.url);
+    return (require('../../package.json') as { version: string }).version;
+  } catch {
+    return '0.0.0';
+  }
+})();
 
 const server = new McpServer(
   { name: 'pdf-letter-mcp', version: packageVersion },
