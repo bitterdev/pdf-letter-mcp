@@ -2,7 +2,14 @@
 
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { createHyphenator, parseBody, parseInline, wrapRuns, type Line } from '../src/letter/text.js';
+import {
+  createHyphenator,
+  parseBody,
+  parseInline,
+  stripRepeatedFrame,
+  wrapRuns,
+  type Line,
+} from '../src/letter/text.js';
 
 /** Every character is one unit wide, which keeps the expectations readable. */
 const measure = (text: string) => text.length;
@@ -70,4 +77,31 @@ test('styles survive line breaking', () => {
   const lines = wrapRuns(parseInline('aaa **bbb ccc**'), 7, measure);
   assert.deepEqual(plain(lines), ['aaa bbb', 'ccc']);
   assert.equal(lines[1]?.segments[0]?.bold, true);
+});
+
+const GERMAN_PREFIXES = ['Sehr geehrte Damen und Herren,', 'Sehr geehrter Herr ', 'Sehr geehrte Frau ', 'Guten Tag '];
+
+test('a salutation and closing repeated in the body are removed', () => {
+  const body = 'Sehr geehrte Damen und Herren,\n\nich bitte um Fristverlängerung.\n\nMit freundlichen Grüßen\nMaria Bitter';
+  assert.equal(stripRepeatedFrame(body, GERMAN_PREFIXES, 'Mit freundlichen Grüßen'), 'ich bitte um Fristverlängerung.');
+});
+
+test('a personal salutation in the body is removed', () => {
+  const body = 'Sehr geehrter Herr Müller,\nvielen Dank für Ihr Schreiben.';
+  assert.equal(stripRepeatedFrame(body, GERMAN_PREFIXES, 'Mit freundlichen Grüßen'), 'vielen Dank für Ihr Schreiben.');
+});
+
+test('a body without salutation or closing stays unchanged', () => {
+  const body = 'Hiermit kündige ich.\n\nBitte bestätigen Sie den Eingang.';
+  assert.equal(stripRepeatedFrame(body, GERMAN_PREFIXES, 'Mit freundlichen Grüßen'), body);
+});
+
+test('the closing phrase inside a sentence is kept', () => {
+  const body = 'Mit freundlichen Grüßen an Ihr Team bedanke ich mich.\n\nWeitere Zeile.\n\nNoch eine.\n\nLetzte.';
+  assert.equal(stripRepeatedFrame(body, GERMAN_PREFIXES, 'Mit freundlichen Grüßen'), body);
+});
+
+test('nothing is stripped when no salutation prefixes are given', () => {
+  const body = 'Sehr geehrte Damen und Herren,\nText.';
+  assert.equal(stripRepeatedFrame(body, [], ''), body);
 });

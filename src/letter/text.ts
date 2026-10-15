@@ -318,3 +318,39 @@ export function truncateToWidth(text: string, maxWidth: number, measure: (value:
   }
   return `${result.trimEnd()}…`;
 }
+
+const FRAME_NORMALIZE = /[\s,.;:!]+/g;
+
+function normalizeFrameLine(line: string): string {
+  return line.replace(FRAME_NORMALIZE, ' ').trim().toLowerCase();
+}
+
+/**
+ * Removes a salutation or closing that the body repeats although the renderer
+ * prints both itself. Callers (language models above all) often write the whole
+ * letter into the body, which put "Mit freundlichen Grüßen" twice on the page.
+ *
+ * A leading line is dropped when it starts with one of the salutation prefixes
+ * (the part of each salutation template before the name). A trailing closing is
+ * dropped together with everything after it (name, signature line) when it is
+ * among the last three non-empty lines. A body without either stays unchanged.
+ */
+export function stripRepeatedFrame(body: string, salutationPrefixes: string[], closing: string): string {
+  const lines = body.replace(/\r\n?/g, '\n').split('\n');
+  const prefixes = salutationPrefixes.map(normalizeFrameLine).filter((prefix) => prefix.length >= 4);
+
+  const first = lines.findIndex((line) => line.trim().length > 0);
+  if (first >= 0) {
+    const head = normalizeFrameLine(lines[first] ?? '');
+    if (head.length <= 80 && prefixes.some((prefix) => head.startsWith(prefix))) lines.splice(0, first + 1);
+  }
+
+  const wanted = normalizeFrameLine(closing);
+  if (wanted) {
+    const filled = lines.map((line, index) => ({ line, index })).filter(({ line }) => line.trim().length > 0);
+    const hit = filled.slice(-3).find(({ line }) => normalizeFrameLine(line) === wanted);
+    if (hit) lines.splice(hit.index);
+  }
+
+  return lines.join('\n').replace(/^\n+|\n+$/g, '');
+}

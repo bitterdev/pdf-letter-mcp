@@ -13,6 +13,7 @@ import {
   createHyphenator,
   parseBody,
   parseInline,
+  stripRepeatedFrame,
   wrapRuns,
   type Hyphenator,
   type InlineRun,
@@ -648,7 +649,18 @@ class LetterRenderer {
   }
 
   private drawBody(): void {
-    const blocks = parseBody(this.letter.body ?? '', this.letter.bodyMode ?? 'hard-breaks');
+    // An explicitly empty salutation prints none, so a greeting in the body is then the only one and stays.
+    const printsSalutation = this.letter.salutation === undefined || this.letter.salutation.trim().length > 0;
+    const salutationPrefixes = !printsSalutation ? [] : [
+      this.labels.salutationGeneric,
+      this.labels.salutationMale,
+      this.labels.salutationFemale,
+      this.labels.salutationNeutral,
+      this.letter.salutation ?? '',
+    ].map((template) => template.split('{')[0] ?? '');
+    const closing = (this.letter.closing ?? this.labels.closing).trim();
+    const body = stripRepeatedFrame(this.letter.body ?? '', salutationPrefixes, closing);
+    const blocks = parseBody(body, this.letter.bodyMode ?? 'hard-breaks');
     const justify = (this.letter.align ?? 'left') === 'justify';
     const indent = 6;
 
