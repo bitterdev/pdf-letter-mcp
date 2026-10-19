@@ -7,3 +7,5 @@ examples/*.pdf
 examples/*.png
 profiles.json
 *.profiles.json
+.env.*
+!.env.example
